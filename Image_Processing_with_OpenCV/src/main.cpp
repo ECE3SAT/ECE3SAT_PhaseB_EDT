@@ -61,7 +61,7 @@ void houghCallback(int, void*)
 		double tmp;
 		tmp = dbThetaMin;
 		dbThetaMin = dbThetaMax;
-		dbThetaMax = dbThetaMin;
+		dbThetaMax = tmp;
 	}
 
 	printf("rho res: %lf theta res: %lf\n", dbThetaResolution, dbRhoResolution);
@@ -146,7 +146,10 @@ int main( int argc, char** argv )
 
 
 	if( !src.data )
-	{ return -1; }
+	{
+	printf("Error : not a valid filename\n"); 
+	return -1; 
+	}
 
 	//	Create a matrix of the same type and size as src (for dst)
 	dst.create( src.size(), src.type() );
