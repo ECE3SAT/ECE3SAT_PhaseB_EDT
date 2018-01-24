@@ -1,0 +1,11 @@
+BUILD/
+mbed\-os/
+.mbed
+mbed
+mbed-os.lib
+mbed_settings.py
+mbed_settings.pyc
+
+Debug/
+.project
+.settings/
