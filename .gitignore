@@ -9,3 +9,4 @@ mbed_settings.pyc
 Debug/
 .project
 .settings/
+.cproject
