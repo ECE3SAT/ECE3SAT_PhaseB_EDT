@@ -1,3 +1,4 @@
+#include "mbed.h"
 #define VC0706_RESET  0x26
 #define VC0706_GEN_VERSION 0x11
 #define VC0706_SET_PORT 0x24
@@ -31,16 +32,14 @@
 
 #define VC0706_SET_ZOOM 0x52
 #define VC0706_GET_ZOOM 0x53
-
 #define CAMERABUFFSIZ 100
-#define CAMERADELAY 10
+#define CAMERADELAY 20
 
-class Adafruit_VC0706 {
- 
- public:
- 
-    Adafruit_VC0706(Serial *ser); // Constructor
-    bool begin(uint16_t baud = 38400);
+class camera{
+public :
+    bool begin();
+
+    camera();
     bool reset(void);
     bool TVon(void);
     bool TVoff(void);
@@ -73,15 +72,15 @@ class Adafruit_VC0706 {
     char* setBaud38400();
     char* setBaud57600();
     char* setBaud115200();
-  
+    Serial*pc;
 private:
 
     uint8_t  serialNum;
     uint8_t  camerabuff[CAMERABUFFSIZ+1];
     uint8_t  bufferLen;
     uint16_t frameptr;
-    
-    Serial *ser;
+    Serial*device;
+bool sendreset();
     
     void common_init(void);
     bool runCommand(uint8_t cmd, uint8_t args[], uint8_t argn, uint8_t resp, bool flushflag = true); 
