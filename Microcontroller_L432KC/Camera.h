@@ -1,4 +1,8 @@
+#ifndef CAMERA_H_
+#define CAMERA_H_
 #include "mbed.h"
+
+
 #define VC0706_RESET  0x26
 #define VC0706_GEN_VERSION 0x11
 #define VC0706_SET_PORT 0x24
@@ -16,6 +20,8 @@
 #define VC0706_MOTION_STATUS 0x43
 #define VC0706_TVOUT_CTRL 0x44
 #define VC0706_OSD_ADD_CHAR 0x45
+
+#define VC0706_CTRL_COLOR 0x3C
 
 #define VC0706_STOPCURRENTFRAME 0x0
 #define VC0706_STOPNEXTFRAME 0x1
@@ -35,11 +41,11 @@
 #define CAMERABUFFSIZ 100
 #define CAMERADELAY 20
 
-class camera{
+class Camera{
 public :
     bool begin();
 
-    camera();
+    Camera();
     bool reset(void);
     bool TVon(void);
     bool TVoff(void);
@@ -51,6 +57,7 @@ public :
     uint8_t available();
     uint8_t getDownsize(void);
     bool setDownsize(uint8_t);
+    bool setColor();
     uint8_t getImageSize();
     bool setImageSize(uint8_t);
     bool getMotionDetect();
@@ -72,7 +79,8 @@ public :
     char* setBaud38400();
     char* setBaud57600();
     char* setBaud115200();
-    Serial*pc;
+    bool sendreset();
+
 private:
 
     uint8_t  serialNum;
@@ -80,7 +88,6 @@ private:
     uint8_t  bufferLen;
     uint16_t frameptr;
     Serial*device;
-bool sendreset();
     
     void common_init(void);
     bool runCommand(uint8_t cmd, uint8_t args[], uint8_t argn, uint8_t resp, bool flushflag = true); 
@@ -89,3 +96,5 @@ bool sendreset();
     bool verifyResponse(uint8_t command);
     void printBuff(void);
 };
+#endif
+

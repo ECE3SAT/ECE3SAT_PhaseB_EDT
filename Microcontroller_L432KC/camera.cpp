@@ -1,18 +1,15 @@
 
-#include "VC0706.h"
-
-  
- camera::camera()
+#include "main.h"
+  // tx, rx
+ Camera::Camera()
 {
       frameptr  = 0;
       bufferLen = 0;
       serialNum = 0;
-    pc=new Serial(USBTX, USBRX);
-    device= new Serial(D5, D4);// tx, rx
-    pc->baud(38400);
+    device= new Serial(D5, D4);
     device->baud(38400);
 }
-uint8_t camera::getImageSize() 
+uint8_t Camera::getImageSize() 
 {
   uint8_t args[] = {0x4, 0x4, 0x1, 0x00, 0x19};
   if (! runCommand(VC0706_READ_DATA, args, sizeof(args), 6))
@@ -20,27 +17,54 @@ uint8_t camera::getImageSize()
 
   return camerabuff[5];
 }
- char * camera::getVersion(void) 
+ char * Camera::getVersion(void) 
 {
-  uint8_t args[] = {0x01};
+  uint8_t args[] = {0x0};
   
   sendCommand(VC0706_GEN_VERSION, args, 1);
   // get reply
-  if (!readResponse(CAMERABUFFSIZ, 200)) 
+  if (!readResponse(CAMERABUFFSIZ, 20)) 
     return 0;
-  camerabuff[bufferLen] = 0;  // end it!
-    
-        //pc->printf("----------------------------\n");
-        //pc->printf("Version :\n");
-        //pc->printf((char *)camerabuff);
-    
-  return (char *)camerabuff;  // return it!
+  camerabuff[bufferLen] = 0;  // end it    
+  return (char *)&camerabuff[6];  // return it!
 }   
+bool Camera::setColor() 
+{
+       // pc->printf("SetColor");
+Timer t;
+    t.reset();
+    device->putc(0x56);   
+     device->putc(0x00);
+    device->putc(0x3C);
+    device->putc(0x02);
+    device->putc(0x01);
+    device->putc(0x01);
+    
+    t.start();
+    int bufferLen=0;
 
+     while ((t.read()<= (float)(2000)/100.0) && (bufferLen != 5)){
+        if(device->readable())
+        {
+            camerabuff[bufferLen] = device->getc();
+            //pc->putc(device->getc());
+            bufferLen++;
+            t.stop();
+            t.reset();
+            t.start();        // there's a byte!*/
+        
+        }
+        //printf("c: %x\n", camerabuff[bufferLen]);
+    } t.stop();
+    
+ 
+
+    //return (runCommand(VC0706_CTRL_COLOR, args, sizeof(args), 5));
+}
 
 /***************** baud rate commands */
 
-char* camera::setBaud9600() 
+char* Camera::setBaud9600() 
 {
   uint8_t args[] = {0x03, 0x01, 0xAE, 0xC8};
 
@@ -53,7 +77,7 @@ char* camera::setBaud9600()
 
 }
 
-char* camera::setBaud19200() 
+char* Camera::setBaud19200() 
 {
   uint8_t args[] = {0x03, 0x01, 0x56, 0xE4};
 
@@ -65,7 +89,7 @@ char* camera::setBaud19200()
   return (char *)camerabuff;  // return it!
 }
 
-char* camera::setBaud38400() 
+char* Camera::setBaud38400() 
 {
   uint8_t args[] = {0x03, 0x01, 0x2A, 0xF2};
 
@@ -77,7 +101,7 @@ char* camera::setBaud38400()
   return (char *)camerabuff;  // return it!
 }
 
-char* camera::setBaud57600() 
+char* Camera::setBaud57600() 
 {
   uint8_t args[] = {0x03, 0x01, 0x1C, 0x1C};
 
@@ -89,7 +113,7 @@ char* camera::setBaud57600()
   return (char *)camerabuff;  // return it!
 }
 
-char* camera::setBaud115200() 
+char* Camera::setBaud115200() 
 {
   uint8_t args[] = {0x03, 0x01, 0x0D, 0xA6};
 
@@ -103,7 +127,7 @@ char* camera::setBaud115200()
 
 /****************** high level photo comamnds */
 
-void camera::OSD(uint8_t x, uint8_t y, char *str) 
+void Camera::OSD(uint8_t x, uint8_t y, char *str) 
 {
   if (strlen(str) > 14) { str[13] = 0; }
 
@@ -128,13 +152,13 @@ void camera::OSD(uint8_t x, uint8_t y, char *str)
    printBuff();
 }
 
-bool camera::setCompression(uint8_t c) 
+bool Camera::setCompression(uint8_t c) 
 {
   uint8_t args[] = {0x5, 0x1, 0x1, 0x12, 0x04, c};
   return runCommand(VC0706_WRITE_DATA, args, sizeof(args), 5);
 }
 
-uint8_t camera::getCompression(void) 
+uint8_t Camera::getCompression(void) 
 {
   uint8_t args[] = {0x4, 0x1, 0x1, 0x12, 0x04};
   runCommand(VC0706_READ_DATA, args, sizeof(args), 6);
@@ -142,7 +166,7 @@ uint8_t camera::getCompression(void)
   return camerabuff[5];
 }
 
-bool camera::setPTZ(uint16_t wz, uint16_t hz, uint16_t pan, uint16_t tilt) 
+bool Camera::setPTZ(uint16_t wz, uint16_t hz, uint16_t pan, uint16_t tilt) 
 {
   uint8_t args[] = {0x08, wz >> 8, wz, 
             hz >> 8, wz, 
@@ -153,7 +177,7 @@ bool camera::setPTZ(uint16_t wz, uint16_t hz, uint16_t pan, uint16_t tilt)
 }
 
 
-bool camera::getPTZ(uint16_t &w, uint16_t &h, uint16_t &wz, uint16_t &hz, uint16_t &pan, uint16_t &tilt) 
+bool Camera::getPTZ(uint16_t &w, uint16_t &h, uint16_t &wz, uint16_t &hz, uint16_t &pan, uint16_t &tilt) 
 {
   uint8_t args[] = {0x0};
   
@@ -189,35 +213,35 @@ bool camera::getPTZ(uint16_t &w, uint16_t &h, uint16_t &wz, uint16_t &hz, uint16
 }
 
 
-bool camera::takePicture() 
+bool Camera::takePicture() 
 {
   frameptr = 0;
   return cameraFrameBuffCtrl(VC0706_STOPCURRENTFRAME); 
 }
 
-bool camera::resumeVideo() 
+bool Camera::resumeVideo() 
 {
   return cameraFrameBuffCtrl(VC0706_RESUMEFRAME); 
 }
 
-bool camera::TVon() 
+bool Camera::TVon() 
 {
   uint8_t args[] = {0x1, 0x1};
   return runCommand(VC0706_TVOUT_CTRL, args, sizeof(args), 5);
 }
-bool camera::TVoff() 
+bool Camera::TVoff() 
 {
   uint8_t args[] = {0x1, 0x0};
   return runCommand(VC0706_TVOUT_CTRL, args, sizeof(args), 5);
 }
 
-bool camera::cameraFrameBuffCtrl(uint8_t command) 
+bool Camera::cameraFrameBuffCtrl(uint8_t command) 
 {
   uint8_t args[] = {0x1, command};
   return runCommand(VC0706_FBUF_CTRL, args, sizeof(args), 5);
 }
 
-uint32_t camera::frameLength(void) 
+uint32_t Camera::frameLength(void) 
 {
   uint8_t args[] = {0x01, 0x00};
   if (!runCommand(VC0706_GET_FBUF_LEN, args, sizeof(args), 9))
@@ -236,13 +260,13 @@ uint32_t camera::frameLength(void)
 }
 
 
-uint8_t camera::available(void) 
+uint8_t Camera::available(void) 
 {
   return bufferLen;
 }
 
 
-uint8_t * camera::readPicture(uint8_t n) 
+uint8_t * Camera::readPicture(uint8_t n) 
 {
   uint8_t args[] = {0x0C, 0x0, 0x0A, 
                     0, 0, frameptr >> 8, frameptr & 0xFF, 
@@ -266,32 +290,33 @@ uint8_t * camera::readPicture(uint8_t n)
 /**************** LOW LEVEL COMMANDS *****************/
 
 
-void camera::printBuff() 
+void Camera::printBuff() 
 {
-  Serial pc(USBTX, USBRX);
+    int test=0;
+  //Serial pc(USBTX, USBRX);
 
-  for (uint8_t i = 0; i< bufferLen; i++) {
+  //for (uint8_t i = 0; i< bufferLen; i++) {
     //Serial.print(" 0x");
     //Serial.print(camerabuff[i], HEX); 
     //pc.printf(" 0x");
     ////pc.putc(camerabuff[i]);
-  }
+  
   //Serial.println();
   //pc.printf("\n");
 }
 
-bool camera::begin()
+bool Camera::begin()
 {
     
     return sendreset();         
 }
-bool camera::sendreset()
+bool Camera::sendreset()
 {
       uint8_t args[] = {0x0};
 
     return (runCommand(VC0706_RESET, args, 1, 5));
 };
-bool camera:: runCommand(uint8_t cmd, uint8_t *args, uint8_t argn, 
+bool Camera:: runCommand(uint8_t cmd, uint8_t *args, uint8_t argn, 
                uint8_t resplen, bool flushflag)
 {
      if(device->readable() && flushflag)
@@ -300,7 +325,7 @@ bool camera:: runCommand(uint8_t cmd, uint8_t *args, uint8_t argn,
      }
      sendCommand(cmd, args, argn);
      if (readResponse(resplen, 200) != resplen) {
-        printf("before false");
+        //printf("before false");
         return false;
     }
     
@@ -312,7 +337,7 @@ bool camera:: runCommand(uint8_t cmd, uint8_t *args, uint8_t argn,
         //pc->printf("   okkk  ");
   return true;
 }
-void camera::sendCommand(uint8_t cmd, uint8_t args[] = 0, uint8_t argn = 0) {
+void Camera::sendCommand(uint8_t cmd, uint8_t args[] = 0, uint8_t argn = 0) {
 
     device->putc(0x56);
     device->putc(serialNum);
@@ -321,7 +346,7 @@ void camera::sendCommand(uint8_t cmd, uint8_t args[] = 0, uint8_t argn = 0) {
         device->putc(args[i1]);
         }
 }
-uint8_t camera ::readResponse(uint8_t numbytes, uint8_t timeout) 
+uint8_t Camera ::readResponse(uint8_t numbytes, uint8_t timeout) 
 
 {
     Timer t;
@@ -330,10 +355,7 @@ uint8_t camera ::readResponse(uint8_t numbytes, uint8_t timeout)
     int bufferLen=0;
      while ((t.read()<= (float)(timeout)/100.0) && (bufferLen != numbytes)){
         if(device->readable())
-        {
-           
-            ////pc.putc(device.getc());
-        
+        {        
             camerabuff[bufferLen] = device->getc();
             bufferLen++;
             t.stop();
@@ -346,7 +368,7 @@ uint8_t camera ::readResponse(uint8_t numbytes, uint8_t timeout)
     return bufferLen;
 
 }
-bool camera::verifyResponse(uint8_t command) 
+bool Camera::verifyResponse(uint8_t command) 
 {
   if ((camerabuff[0] != 0x76) ||
       (camerabuff[1] != serialNum) ||
