@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-#include <string.h>
+#include <string>
 
 using namespace cv;
 using namespace std;
@@ -25,6 +25,8 @@ char srcWindowName[50];// = "Source";
 char* gaussWindowName = "Gaussian Filter";
 char* cannyWindowName = "Canny Filter";
 char* houghWindowName = "Hough Transform";
+
+
 
 void initGlobalVariables(){
 
@@ -135,38 +137,7 @@ void gaussCallback(int, void*)
 	cannyCallback(0,0);
 }
 
-
-/** @function main */
-int main( int argc, char** argv )
-{
-	initGlobalVariables();
-
-	//	Load an image
-	src = imread( argv[1] );
-
-
-	if( !src.data )
-	{
-	printf("Error : not a valid filename\n"); 
-	return -1; 
-	}
-
-	//	Create a matrix of the same type and size as src (for dst)
-	dst.create( src.size(), src.type() );
-
-	//	Convert the image to grayscale
-	cvtColor( src, src_gray, CV_BGR2GRAY );
-
-	//	Create a window
-	sprintf(srcWindowName, "Source -%s %d x %d",argv[1], src.rows, src.cols);
-	namedWindow( srcWindowName, WINDOW_NORMAL );
-	  //namedWindow( gaussWindowName, CV_WINDOW_AUTOSIZE );
-	namedWindow( cannyWindowName, CV_WINDOW_AUTOSIZE );
-	namedWindow( houghWindowName, WINDOW_NORMAL ); //CV_WINDOW_AUTOSIZE);
-
-	//	Display Image source
-	imshow(srcWindowName, src);
-
+void createAllTrackbar(){
 	/*******	Gauss TrackBar	*******
 	  //createTrackbar( "Kernel Size :", gaussWindowName, &gaussKernelSize, 20, gaussCallback );
 	  //setTrackbarMin( "Kernel Size :", gaussWindowName, 1);
@@ -199,13 +170,78 @@ int main( int argc, char** argv )
 	//		Max Line Gap
 	createTrackbar( "Max Line Gap :", houghWindowName, &maxLineGap, (int)src.cols / 20, houghCallback);
 
+
+
+}
+
+
+/** @function main */
+int main( int argc, char** argv )
+{
+	initGlobalVariables();
+	printf("---CHOICE---\n");
+	printf("Image File : 1 \n");
+	printf("Serial Port : 2 \n\n?");
+	int choice;
+	cin >> choice;
+	cin.ignore(std::numeric_limits<streamsize>::max(),'\n');
+	if(choice == 1){
+
+		//	Getting Image File
+		string imageFilePath = "";
+		printf("Image File Path : ");
+		getline(cin, imageFilePath);		//GNU READLINE LIBRARY for autocompletion		imageFilePath = readLine( "Image File Path : ");
+		printf("\n");
+
+		//	Load an image
+		src = imread( imageFilePath );
+	}
+	else if(choice == 2){
+
+		//	Getting Serial Path
+		string serialPath = "";
+		printf("Serial Path : ");
+		getline(cin, serialPath);		//GNU READLINE LIBRARY for autocompletion		imageFilePath = readLine( "Image File Path : ");
+		printf("\n");
+
+		int serialFile;
+		serialFile = open(serialPath.c_str(),O_RDWR | O_NOCTTY);
+		if(serialFile)
+			printf("Error in Opening : %s\n", serialPath.c_str());
+		else
+			printf("%s Opened Successfully\n", serialPath.c_str());
+		close(serialFile);
+	}
+
+	if( !src.data )
+	{
+		printf("Error : not a valid filename\n");
+		return -1;
+	}
+
+	//	Create a matrix of the same type and size as src (for dst)
+	dst.create( src.size(), src.type() );
+
+	//	Convert the image to grayscale
+	cvtColor( src, src_gray, CV_BGR2GRAY );
+
+	//	Create a window
+	sprintf(srcWindowName, "Source -%s %d x %d",argv[1], src.rows, src.cols);
+	namedWindow( srcWindowName, WINDOW_NORMAL );
+	  //namedWindow( gaussWindowName, CV_WINDOW_AUTOSIZE );
+	namedWindow( cannyWindowName, CV_WINDOW_AUTOSIZE );
+	namedWindow( houghWindowName, WINDOW_NORMAL ); //CV_WINDOW_AUTOSIZE);
+
+	//	Display Image source
+	imshow(srcWindowName, src);
+
+	//	Create trackbar
+	createAllTrackbar();
+
 	/// Set Threshold
 	gaussCallback(0, 0);
 	cannyCallback(0, 0);
 	houghCallback(0, 0);
-
-	//printf("size: %d\n",Size(gaussKernelSize,gaussKernelSize));
-
 
 	/// Wait until user exit program by pressing a key
 	do{
@@ -225,3 +261,4 @@ int main( int argc, char** argv )
 
 	return 0;
 }
+
