@@ -88,7 +88,7 @@ private:
     uint8_t  bufferLen;
     uint16_t frameptr;
     Serial*device;
-    
+    uint8_t color;
     void common_init(void);
     bool runCommand(uint8_t cmd, uint8_t args[], uint8_t argn, uint8_t resp, bool flushflag = true); 
     void sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn); 

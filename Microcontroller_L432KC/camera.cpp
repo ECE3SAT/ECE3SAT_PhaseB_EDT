@@ -7,6 +7,7 @@
       bufferLen = 0;
       serialNum = 0;
     device= new Serial(D5, D4);
+    color=0x01;
     device->baud(38400);
 }
 uint8_t Camera::getImageSize() 
@@ -38,7 +39,10 @@ Timer t;
     device->putc(0x3C);
     device->putc(0x02);
     device->putc(0x01);
-    device->putc(0x01);
+    if(color==0x01)
+      color =0x02;
+    else color=0x01;
+    device->putc(color);
     
     t.start();
     int bufferLen=0;
