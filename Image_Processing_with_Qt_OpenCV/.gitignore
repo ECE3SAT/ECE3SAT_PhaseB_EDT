@@ -1,0 +1,4 @@
+.qmake*
+
+*.pro.user
+bin/*

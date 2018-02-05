@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>arrow_anticlockwise.png</file>
+    <file>arrow_clockwise.png</file>
+    <file>ECE3SAT.png</file>
+</qresource>
+</RCC>
