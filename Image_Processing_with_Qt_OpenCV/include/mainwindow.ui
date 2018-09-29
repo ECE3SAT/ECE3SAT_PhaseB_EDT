@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1204</width>
-    <height>893</height>
+    <height>969</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -457,10 +457,10 @@
              <number>2</number>
             </property>
             <property name="pageStep">
-             <number>9</number>
+             <number>2</number>
             </property>
             <property name="value">
-             <number>3</number>
+             <number>5</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -473,7 +473,7 @@
           <item row="0" column="2">
            <widget class="QLabel" name="labelGaussKernelSizeValue">
             <property name="text">
-             <string>3</string>
+             <string>5</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -553,6 +553,9 @@
             <property name="pageStep">
              <number>35</number>
             </property>
+            <property name="value">
+             <number>100</number>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -578,13 +581,13 @@
           <item row="2" column="1">
            <widget class="QSlider" name="cannyMaxThresholdSlider">
             <property name="maximum">
-             <number>200</number>
+             <number>500</number>
             </property>
             <property name="pageStep">
              <number>35</number>
             </property>
             <property name="value">
-             <number>100</number>
+             <number>200</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -597,7 +600,7 @@
           <item row="0" column="2">
            <widget class="QLabel" name="labelCannyLowThresholdValue">
             <property name="text">
-             <string>0</string>
+             <string>100</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -607,7 +610,7 @@
           <item row="2" column="2">
            <widget class="QLabel" name="labelCannyMaxThresholdValue">
             <property name="text">
-             <string>100</string>
+             <string>200</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -644,6 +647,9 @@
            <widget class="QSlider" name="houghThetaMinSlider">
             <property name="maximum">
              <number>180</number>
+            </property>
+            <property name="value">
+             <number>75</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -708,11 +714,14 @@
           </item>
           <item row="0" column="1">
            <widget class="QSlider" name="houghThresholdSlider">
+            <property name="maximum">
+             <number>500</number>
+            </property>
             <property name="pageStep">
              <number>50</number>
             </property>
             <property name="value">
-             <number>20</number>
+             <number>150</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -726,6 +735,9 @@
            <widget class="QSlider" name="houghThetaMaxSlider">
             <property name="maximum">
              <number>180</number>
+            </property>
+            <property name="value">
+             <number>145</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -745,7 +757,7 @@
           <item row="0" column="2">
            <widget class="QLabel" name="labelHoughThresholdValue">
             <property name="text">
-             <string>20</string>
+             <string>150</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -775,7 +787,7 @@
           <item row="3" column="2">
            <widget class="QLabel" name="labelHoughThetaMaxValue">
             <property name="text">
-             <string>0</string>
+             <string>145</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -785,7 +797,7 @@
           <item row="4" column="2">
            <widget class="QLabel" name="labelHoughThetaMinValue">
             <property name="text">
-             <string>0</string>
+             <string>75</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

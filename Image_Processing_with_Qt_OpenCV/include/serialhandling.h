@@ -67,7 +67,7 @@ class SerialHandling : public QObject
         void imageFileWriting();
         void newImageFilePath(QString path);
         void sendVersion(string message);
-
+        void imageFileEnding();
 };
 
 #endif // SERIALHANDLING_H

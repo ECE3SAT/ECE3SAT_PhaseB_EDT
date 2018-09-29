@@ -30,6 +30,7 @@ void MainWindow::initUIConnection()
     connect(ui->cannyLowThresholdSlider,        SIGNAL(valueChanged(int)),   this,    SLOT(cannyCallback())          );
     connect(ui->cannyMaxThresholdSlider,        SIGNAL(valueChanged(int)),   this,    SLOT(cannyCallback())          );
     connect(ui->cannyApertureSizeSlider,        SIGNAL(valueChanged(int)),   this,    SLOT(cannyCallback())          );
+    connect(ui->houghThresholdSlider,           SIGNAL(valueChanged(int)),   this,    SLOT(houghCallback())          );
     connect(ui->houghRhoResolutionSlider,       SIGNAL(valueChanged(int)),   this,    SLOT(houghCallback())          );
     connect(ui->houghThetaMinSlider,            SIGNAL(valueChanged(int)),   this,    SLOT(houghCallback())          );
     connect(ui->houghThetaMaxSlider,            SIGNAL(valueChanged(int)),   this,    SLOT(houghCallback())          );
@@ -45,7 +46,7 @@ void MainWindow::initUIConnection()
     ui->comboBoxResolution->addItem( QString("320x280") );
     ui->comboBoxResolution->addItem( QString("160x120") );
 
-    for(int i=1; i<6; i++){
+    for(int i=0; i<6; i++){
         ui->comboBoxPCBaudRate->addItem(  QString::number(1200*pow(2, i)) );
         ui->comboBoxCamBaudRate->addItem( QString::number(1200*pow(2, i)) );
     }
@@ -122,7 +123,7 @@ void MainWindow::displaySourceImage()
 {
     srcImage = imread(srcImagePath.toStdString());
     ui->imageSource->setPixmap( QPixmap::fromImage(cvMatToQImage(srcImage)) );
-    initParameters();
+   initParameters();
 }
 
 void MainWindow::initParameters()
@@ -133,7 +134,13 @@ void MainWindow::initParameters()
     ui->houghThresholdSlider->setMaximum(srcImage.cols);
     */
 
-    ui->cannyMaxThresholdSlider->setMaximum(srcImage.cols);
+    /*ui->cannyMaxThresholdSlider->setMaximum(srcImage.cols);
+    ui->cannyLowThresholdSlider->setValue(100);
+    ui->cannyMaxThresholdSlider->setValue(200);
+
+    ui->houghThresholdSlider->setValue(150);
+    ui->houghThetaMaxSlider->setValue(145);
+    ui->houghThetaMinSlider->setValue(75);*/
 
     //ui->houghThresholdSlider->setValue(srcImage.cols/3);
 
@@ -262,8 +269,10 @@ void MainWindow::cannyCallback()
 void MainWindow::blurCallback()
 {
     //  Setting value
-    if(ui->gaussKernelSizeSlider->value()%2 != 0)
-        gaussKernelSize = ui->gaussKernelSizeSlider->value();
+    gaussKernelSize = ui->gaussKernelSizeSlider->value();
+    if(gaussKernelSize%2 == 0){
+        gaussKernelSize++;
+    }
 
     gaussSigma = ui->gaussSigmaSlider->value();
 

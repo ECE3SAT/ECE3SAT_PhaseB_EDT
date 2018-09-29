@@ -64,12 +64,12 @@ void SerialHandling::serialReadyToRead()
     QByteArray serialData = serialPort->readAll();
 
     // DEBUG LINES
-    /*
+
     cout<<"serial read: "<<serialData.toHex().toStdString()<<endl;
     cout<<"length: "<<serialData.length()<<endl;
     cout<<"last byte : ";
     cout<< hex <<(unsigned int)savedLastSerialByte<<endl;
-    */
+    cout<<endl;
 
     /*
     if(isReadingVersion){
@@ -79,12 +79,11 @@ void SerialHandling::serialReadyToRead()
     */
 
 
-
    if(isReadingImage){
         imageFile->write(serialData);
         imageFile->flush();
         emit imageFileWriting();
-        return;
+       // return;
     }
 
     //  Testing Begin/End of JPEG image : 0xFFD8/0xFFD9
@@ -92,7 +91,7 @@ void SerialHandling::serialReadyToRead()
         uint8_t tmp_0 = serialData.at(i-1);
         uint8_t tmp_1 = serialData.at(i);
 
-        if( ( tmp_0 == 0xFF && tmp_1 == 0xD9) || (savedLastSerialByte == 0xFF && tmp_0 == 0xD9 ) ){
+        if( ( tmp_0 == 0xFF && tmp_1 == 0xD9) || (savedLastSerialByte == 0xFF && tmp_1 == 0xD9 ) ){
             cout<<"Finish reading File"<<endl;
             isReadingImage = false;
             imageFile->write(serialData);
@@ -100,7 +99,8 @@ void SerialHandling::serialReadyToRead()
             emit imageFileWriting();
             fileNumber++;
             imageFile->close();
-            return;
+            emit imageFileEnding();
+            break;
         }
         else if((tmp_0 == 0xFF && tmp_1 == 0xD8) || (savedLastSerialByte == 0xFF && tmp_0 == 0xD8 ) ){
             cout<<"Start reading File"<<endl;
@@ -110,7 +110,7 @@ void SerialHandling::serialReadyToRead()
             imageFile->write(serialData);
             imageFile->flush();
             emit imageFileWriting();
-            return;
+            break;
         }
     }
 
